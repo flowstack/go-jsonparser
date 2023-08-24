@@ -61,8 +61,9 @@ if value, err := jsonparser.GetInt(data, "company", "size"); err == nil {
 }
 
 // You can use `ArrayEach` helper to iterate items [item1, item2 .... itemN]
-jsonparser.ArrayEach(data, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+jsonparser.ArrayEach(data, func(value []byte, dataType jsonparser.ValueType, offset int) (err error) {
 	fmt.Println(jsonparser.Get(value, "url"))
+  return nil
 }, "person", "avatars")
 
 // Or use can access fields by index!
@@ -153,7 +154,7 @@ If key data type do not match, it will return error.
 
 ### **`ArrayEach`**
 ```go
-func ArrayEach(data []byte, cb func(value []byte, dataType jsonparser.ValueType, offset int, err error), keys ...string)
+func ArrayEach(data []byte, cb func(value []byte, dataType jsonparser.ValueType, offset int) (err error), keys ...string)
 ```
 Needed for iterating arrays, accepts a callback function with the same return arguments as `Get`.
 
