@@ -709,12 +709,10 @@ func WriteToBuffer(buffer []byte, str string) int {
 }
 
 /*
-
 Del - Receives existing data structure, path to delete.
 
 Returns:
 `data` - return modified data
-
 */
 func Delete(data []byte, keys ...string) []byte {
 	lk := len(keys)
@@ -795,13 +793,11 @@ func Delete(data []byte, keys ...string) []byte {
 }
 
 /*
-
 Set - Receives existing data structure, path to set, and data to set at that key.
 
 Returns:
 `value` - modified byte array
 `err` - On any parsing error
-
 */
 func Set(data []byte, setValue []byte, keys ...string) (value []byte, err error) {
 	// ensure keys are set
@@ -1202,7 +1198,7 @@ func GetString(data []byte, keys ...string) (val string, err error) {
 		if t == Null {
 			return "", NullValueError
 		}
-		return "", fmt.Errorf("Value is not a string: %s", string(v))
+		return "", fmt.Errorf("value is not a string: %s", string(v))
 	}
 
 	// If no escapes return raw content
@@ -1227,7 +1223,7 @@ func GetFloat(data []byte, keys ...string) (val float64, err error) {
 		if t == Null {
 			return 0, NullValueError
 		}
-		return 0, fmt.Errorf("Value is not a number: %s", string(v))
+		return 0, fmt.Errorf("value is not a number: %s", string(v))
 	}
 
 	return ParseFloat(v)
@@ -1246,7 +1242,7 @@ func GetInt(data []byte, keys ...string) (val int64, err error) {
 		if t == Null {
 			return 0, NullValueError
 		}
-		return 0, fmt.Errorf("Value is not a number: %s", string(v))
+		return 0, fmt.Errorf("value is not a number: %s", string(v))
 	}
 
 	return ParseInt(v)
@@ -1266,7 +1262,7 @@ func GetBoolean(data []byte, keys ...string) (val bool, err error) {
 		if t == Null {
 			return false, NullValueError
 		}
-		return false, fmt.Errorf("Value is not a boolean: %s", string(v))
+		return false, fmt.Errorf("value is not a boolean: %s", string(v))
 	}
 
 	return ParseBoolean(v)
