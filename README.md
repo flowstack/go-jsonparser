@@ -1,4 +1,9 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/flowstack/go-jsonparser)](https://goreportcard.com/report/github.com/flowstack/go-jsonparser) ![License](https://img.shields.io/dub/l/vibe-d.svg)
+## NOTE: This is a hard fork of [github.com/buger/jsonparser](https://github.com/buger/jsonparser)  
+### Reasoning:
+The original repo seems to have gone a bit stale and we needed and wanted some changes to the code, while still sharing and reckognizing the people who actually wrote this code.  
+
+A simple fork doesn't make too much sense, as all paths must be updated anyways, making it hard to create useable pull requests for the original repo.
+
 # Alternative JSON parser for Go (10x times faster standard library)
 
 It does not require you to know the structure of the payload (eg. create structs), and allows accessing fields by providing the path to them. It is up to **10 times faster** than standard `encoding/json` package (depending on payload size and usage), **allocates no memory**. See benchmarks below.
