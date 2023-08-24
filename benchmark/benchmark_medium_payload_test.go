@@ -1,6 +1,6 @@
 /*
-   Each test should process 2.4kb json record (based on Clearbit API)
-   It should read multiple nested fields and 1 array
+Each test should process 2.4kb json record (based on Clearbit API)
+It should read multiple nested fields and 1 array
 */
 package benchmark
 
@@ -12,18 +12,19 @@ import (
 	"github.com/a8m/djson"
 	"github.com/antonholmquist/jason"
 	"github.com/bitly/go-simplejson"
-	"github.com/buger/jsonparser"
+	"github.com/flowstack/go-jsonparser"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	"github.com/mreiferson/go-ujson"
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/ugorji/go/codec"
+
 	// "fmt"
 	"bytes"
 	"errors"
 )
 
 /*
-   github.com/buger/jsonparser
+github.com/flowstack/go-jsonparser
 */
 func BenchmarkJsonParserMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -162,7 +163,7 @@ func BenchmarkJsonParserObjectEachStructMedium(b *testing.B) {
 }
 
 /*
-   encoding/json
+encoding/json
 */
 func BenchmarkEncodingJsonStructMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -198,7 +199,7 @@ func BenchmarkEncodingJsonInterfaceMedium(b *testing.B) {
 }
 
 /*
-   github.com/Jeffail/gabs
+github.com/Jeffail/gabs
 */
 func BenchmarkGabsMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -219,7 +220,7 @@ func BenchmarkGabsMedium(b *testing.B) {
 }
 
 /*
-   github.com/bitly/go-simplejson
+github.com/bitly/go-simplejson
 */
 func BenchmarkGoSimpleJsonMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -298,7 +299,7 @@ func BenchmarkUjsonMedium(b *testing.B) {
 }
 
 /*
-   github.com/a8m/djson
+github.com/a8m/djson
 */
 func BenchmarkDjsonMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -318,7 +319,7 @@ func BenchmarkDjsonMedium(b *testing.B) {
 }
 
 /*
-   github.com/ugorji/go/codec
+github.com/ugorji/go/codec
 */
 func BenchmarkUgirjiMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -336,7 +337,7 @@ func BenchmarkUgirjiMedium(b *testing.B) {
 }
 
 /*
-   github.com/mailru/easyjson
+github.com/mailru/easyjson
 */
 func BenchmarkEasyJsonMedium(b *testing.B) {
 	for i := 0; i < b.N; i++ {
