@@ -2,6 +2,7 @@ package jsonparser
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	_ "fmt"
 	"reflect"
@@ -12,16 +13,18 @@ import (
 var activeTest = ""
 
 func toArray(data []byte) (result [][]byte) {
-	ArrayEach(data, func(value []byte, dataType ValueType, offset int, err error) {
+	ArrayEach(data, func(value []byte, dataType ValueType, offset int) error {
 		result = append(result, value)
+		return nil
 	})
 
 	return
 }
 
 func toStringArray(data []byte) (result []string) {
-	ArrayEach(data, func(value []byte, dataType ValueType, offset int, err error) {
+	ArrayEach(data, func(value []byte, dataType ValueType, offset int) error {
 		result = append(result, string(value))
+		return nil
 	})
 
 	return
@@ -1406,7 +1409,7 @@ func TestArrayEach(t *testing.T) {
 	mock := []byte(`{"a": { "b":[{"x": 1} ,{"x":2},{ "x":3}, {"x":4} ]}}`)
 	count := 0
 
-	ArrayEach(mock, func(value []byte, dataType ValueType, offset int, err error) {
+	ArrayEach(mock, func(value []byte, dataType ValueType, offset int) error {
 		count++
 
 		switch count {
@@ -1429,14 +1432,15 @@ func TestArrayEach(t *testing.T) {
 		default:
 			t.Errorf("Should process only 4 items")
 		}
+		return nil
 	}, "a", "b")
 }
 
 func TestArrayEachWithWhiteSpace(t *testing.T) {
 	// Issue #159
 	count := 0
-	funcError := func([]byte, ValueType, int, error) { t.Errorf("Run func not allow") }
-	funcSuccess := func(value []byte, dataType ValueType, index int, err error) {
+	funcError := func([]byte, ValueType, int) error { return errors.New("Run func not allow") }
+	funcSuccess := func(value []byte, dataType ValueType, index int) error {
 		count++
 
 		switch count {
@@ -1455,11 +1459,12 @@ func TestArrayEachWithWhiteSpace(t *testing.T) {
 		default:
 			t.Errorf("Should process only 3 items")
 		}
+		return nil
 	}
 
 	type args struct {
 		data []byte
-		cb   func(value []byte, dataType ValueType, offset int, err error)
+		cb   func(value []byte, dataType ValueType, offset int) error
 		keys []string
 	}
 	tests := []struct {
@@ -1483,11 +1488,11 @@ func TestArrayEachWithWhiteSpace(t *testing.T) {
 }
 
 func TestArrayEachEmpty(t *testing.T) {
-	funcError := func([]byte, ValueType, int, error) { t.Errorf("Run func not allow") }
+	funcError := func([]byte, ValueType, int) error { return errors.New("Run func not allow") }
 
 	type args struct {
 		data []byte
-		cb   func(value []byte, dataType ValueType, offset int, err error)
+		cb   func(value []byte, dataType ValueType, offset int) error
 		keys []string
 	}
 	tests := []struct {
