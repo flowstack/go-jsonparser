@@ -381,7 +381,7 @@ func sameTree(p1, p2 []string) bool {
 
 const stackArraySize = 128
 
-func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]string) int {
+func EachKey(data []byte, cb func(int, []byte, ValueType) error, paths ...[]string) (int, error) {
 	var x struct{}
 	var level, pathsMatched, i int
 	ln := len(data)
@@ -413,7 +413,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 
 			strEnd, keyEscaped := stringEnd(data[i:])
 			if strEnd == -1 {
-				return -1
+				return -1, MalformedJsonError
 			}
 			i += strEnd
 
@@ -421,7 +421,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 
 			valueOffset := nextToken(data[i:])
 			if valueOffset == -1 {
-				return -1
+				return -1, MalformedJsonError
 			}
 
 			i += valueOffset
@@ -439,7 +439,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 				} else {
 					var stackbuf [unescapeStackBufSize]byte
 					if ku, err := Unescape(key, stackbuf[:]); err != nil {
-						return -1
+						return -1, MalformedStringEscapeError
 					} else {
 						keyUnesc = ku
 					}
@@ -447,8 +447,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 
 				if maxPath >= level {
 					if level < 1 {
-						cb(-1, nil, Unknown, MalformedJsonError)
-						return -1
+						return -1, MalformedJsonError
 					}
 
 					pathsBuf[level-1] = bytesToString(&keyUnesc)
@@ -463,14 +462,21 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 						pathFlags[pi] = true
 
 						v, dt, _, e := Get(data[i+1:])
-						cb(pi, v, dt, e)
+						if e != nil {
+							return -1, e
+						}
+
+						e = cb(pi, v, dt)
+						if e != nil {
+							return -1, e
+						}
 
 						if pathsMatched == len(paths) {
 							break
 						}
 					}
 					if pathsMatched == len(paths) {
-						return i
+						return i, nil
 					}
 				}
 
@@ -508,8 +514,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 			pIdxFlags = pIdxFlags[0:len(paths)]
 
 			if level < 0 {
-				cb(-1, nil, Unknown, MalformedJsonError)
-				return -1
+				return -1, MalformedJsonError
 			}
 
 			for pi, p := range paths {
@@ -527,7 +532,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 				level++
 
 				var curIdx int
-				arrOff, _ := ArrayEach(data[i:], func(value []byte, dataType ValueType, offset int) error {
+				arrOff, e := ArrayEach(data[i:], func(value []byte, dataType ValueType, offset int) error {
 					if _, ok = arrIdxFlags[curIdx]; ok {
 						for pi, p := range paths {
 							if pIdxFlags[pi] {
@@ -541,7 +546,15 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 
 									if of != -1 {
 										v, dt, _, e := Get(value[of:])
-										cb(pi, v, dt, e)
+										if e != nil {
+											return e
+										}
+
+										e = cb(pi, v, dt)
+										if e != nil {
+											return e
+										}
+
 									}
 								}
 							}
@@ -552,15 +565,19 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 					return nil
 				})
 
+				if e != nil {
+					return -1, e
+				}
+
 				if pathsMatched == len(paths) {
-					return i
+					return i, nil
 				}
 
 				i += arrOff - 1
 			} else {
 				// Do not search for keys inside arrays
 				if arraySkip := blockEnd(data[i:], '[', ']'); arraySkip == -1 {
-					return -1
+					return -1, nil
 				} else {
 					i += arraySkip - 1
 				}
@@ -572,7 +589,7 @@ func EachKey(data []byte, cb func(int, []byte, ValueType, error), paths ...[]str
 		i++
 	}
 
-	return -1
+	return -1, nil
 }
 
 // Data types available in valid JSON data.

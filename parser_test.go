@@ -1730,7 +1730,7 @@ func TestEachKey(t *testing.T) {
 
 	keysFound := 0
 
-	EachKey(testJson, func(idx int, value []byte, vt ValueType, err error) {
+	EachKey(testJson, func(idx int, value []byte, vt ValueType) error {
 		keysFound++
 
 		switch idx {
@@ -1785,6 +1785,7 @@ func TestEachKey(t *testing.T) {
 		default:
 			t.Errorf("Should find only 10 keys, got %v key", idx)
 		}
+		return nil
 	}, paths...)
 
 	if keysFound != 11 {

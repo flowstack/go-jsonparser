@@ -82,7 +82,7 @@ paths := [][]string{
   []string{"person", "avatars", "[0]", "url"},
   []string{"company", "url"},
 }
-jsonparser.EachKey(data, func(idx int, value []byte, vt jsonparser.ValueType, err error){
+jsonparser.EachKey(data, func(idx int, value []byte, vt jsonparser.ValueType) error {
   switch idx {
   case 0: // []string{"person", "name", "fullName"}
     ...
@@ -91,6 +91,7 @@ jsonparser.EachKey(data, func(idx int, value []byte, vt jsonparser.ValueType, er
   case 2: // []string{"company", "url"},
     ...
   }
+  return nil
 }, paths...)
 
 // For more information see docs below
@@ -174,7 +175,7 @@ jsonparser.ObjectEach(myJson, handler)
 
 ### **`EachKey`**
 ```go
-func EachKey(data []byte, cb func(idx int, value []byte, dataType jsonparser.ValueType, err error), paths ...[]string)
+func EachKey(data []byte, cb func(idx int, value []byte, dataType jsonparser.ValueType) error, paths ...[]string)
 ```
 When you need to read multiple keys, and you do not afraid of low-level API `EachKey` is your friend. It read payload only single time, and calls callback function once path is found. For example when you call multiple times `Get`, it has to process payload multiple times, each time you call it. Depending on payload `EachKey` can be multiple times faster than `Get`. Path can use nested keys as well!
 
@@ -187,7 +188,7 @@ paths := [][]string{
 }
 var data SmallPayload
 
-jsonparser.EachKey(smallFixture, func(idx int, value []byte, vt jsonparser.ValueType, err error){
+jsonparser.EachKey(smallFixture, func(idx int, value []byte, vt jsonparser.ValueType) error {
 	switch idx {
 	case 0:
 		data.Uuid, _ = value
@@ -200,6 +201,7 @@ jsonparser.EachKey(smallFixture, func(idx int, value []byte, vt jsonparser.Value
 		v, _ := jsonparser.ParseInt(value)
 		data.St = int(v)
 	}
+  return nil
 }, paths...)
 ```
 

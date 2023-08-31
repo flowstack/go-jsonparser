@@ -14,11 +14,12 @@ var testPaths = [][]string{
 }
 
 func testIter(data []byte) (err error) {
-	EachKey(data, func(idx int, value []byte, vt ValueType, iterErr error) {
-		if iterErr != nil {
-			err = fmt.Errorf("Error parsing json: %s", iterErr.Error())
-		}
+	_, err = EachKey(data, func(idx int, value []byte, vt ValueType) error {
+		return nil
 	}, testPaths...)
+	if err != nil {
+		err = fmt.Errorf("Error parsing json: %s", err.Error())
+	}
 	return err
 }
 
@@ -53,8 +54,8 @@ func TestKeyDepth(t *testing.T) {
 	sb.WriteString("}")
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys)
 }
 
@@ -74,8 +75,8 @@ func TestKeyCount(t *testing.T) {
 	sb.WriteString("}")
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys...)
 }
 
@@ -92,8 +93,8 @@ func TestKeyDepthArray(t *testing.T) {
 	sb.WriteString("]")
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys)
 }
 
@@ -113,8 +114,8 @@ func TestKeyCountArray(t *testing.T) {
 	sb.WriteString("]")
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys...)
 }
 
@@ -136,8 +137,8 @@ func TestEachKeyArray(t *testing.T) {
 	sb.WriteString(`]`)
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys...)
 }
 
@@ -155,8 +156,8 @@ func TestLargeArray(t *testing.T) {
 	keys := [][]string{[]string{`[1]`}}
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys...)
 }
 
@@ -174,7 +175,7 @@ func TestArrayOutOfBounds(t *testing.T) {
 	keys := [][]string{[]string{`[128]`}}
 
 	data := []byte(sb.String())
-	EachKey(data, func(offset int, value []byte, dt ValueType, err error) {
-		return
+	EachKey(data, func(offset int, value []byte, dt ValueType) error {
+		return nil
 	}, keys...)
 }

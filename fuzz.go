@@ -23,7 +23,7 @@ func FuzzEachKey(data []byte) int {
 		{"arr", "["},
 		{"a\n", "b\n"},
 	}
-	EachKey(data, func(idx int, value []byte, vt ValueType, err error) {}, paths...)
+	EachKey(data, func(idx int, value []byte, vt ValueType) error { return nil }, paths...)
 	return 1
 }
 
